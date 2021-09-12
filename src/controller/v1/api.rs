@@ -2,6 +2,8 @@ extern crate actix_web;
 
 use actix_web::{error, HttpResponse, post, Result, web};
 
+use crate::services::qrcode_services::resolve;
+
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
         .app_data(

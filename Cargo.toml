@@ -8,10 +8,11 @@ edition = "2018"
 
 [dependencies]
 actix-web = { version = "3", features = ["openssl"] }
-hex-literal = "0.3.3"
 aes = "0.7.5"
 openssl = "0.10"
-serde = "1.0"
-serde_json = "1.0"
-serde_derive = "1.0"
+serde = { version = "^1.0", feature = ["derive"] }
+serde_json = "^1.0"
+serde_derive = "^1.0"
 block-modes = "0.8.1"
+hex = "0.4.3"
+reqwest = { version = "0.11.4", features = ["json", "blocking"] }

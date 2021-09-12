@@ -28,15 +28,15 @@ pub fn decipher_default(data: &[u8]) -> Result<String, FromUtf8Error> {
     decipher(KEY, IV, data)
 }
 
-pub fn cipher(key: &[u8], iv: &[u8], data: &[u8]) -> &[u8] {
+pub fn cipher<'a>(key: &'a [u8], iv: &'a [u8], data: String) -> Vec<u8> {
     // Create Buffer
-    let mut buffer = Vec::from(data);
+    let mut buffer = Vec::from(data.into_bytes());
     // Initial Cipher
     let cipher = Aes128CbcZeroPadding::new_from_slices(key, iv).unwrap();
-    let cipher_res = cipher.encrypt(&mut buffer).unwrap();
+    let cipher_res = cipher.encrypt_vec(&mut buffer);
     cipher_res
 }
 
-pub fn cipher_default(data: &[u8]) -> &[u8] {
+pub fn cipher_default<'a>(data: String) -> Vec<u8> {
     cipher(KEY, IV, data)
 }
