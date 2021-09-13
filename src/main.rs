@@ -4,10 +4,10 @@ use actix_web::{
     App,
     web,
 };
+use hex::FromHex;
 
 mod controller;
 mod services;
-
 
 // Main crate
 #[actix_web::main]

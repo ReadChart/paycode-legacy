@@ -17,9 +17,9 @@ const IV: &[u8] = b"***REMOVED***";
 // General decipher for normal AES/CBC/ZeroPadding
 pub fn decipher(key: &[u8], iv: &[u8], data: &[u8]) -> Result<String, FromUtf8Error> {
     // Create buffer
-    let mut buffer = Vec::from(data);
+    let mut buffer = data.to_vec();
     // Initial cipher
-    let cipher = Aes128CbcZeroPadding::new_from_slices(key, iv).unwrap();
+    let cipher = Aes128CbcZeroPadding::new_from_slices(&key, &iv).unwrap();
     let decipher_res = cipher.decrypt(&mut buffer).unwrap();
     String::from_utf8(Vec::from(decipher_res))
 }

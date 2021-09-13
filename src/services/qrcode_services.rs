@@ -2,12 +2,15 @@ extern crate reqwest;
 extern crate serde;
 
 use actix_web::web::Json;
-use hex::encode;
+use hex::{decode, encode};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::result_services::cipher_default;
+use crate::services::result_services::{
+    cipher_default,
+    decipher_default,
+};
 
 #[derive(Serialize)]
 struct EncodedReq {
@@ -25,9 +28,24 @@ struct Req {
 }
 
 #[derive(Deserialize)]
-struct Resp {
+#[serde(rename_all = "camelCase")]
+struct EncodedResp {
     ret_code: String,
     info: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Resp {
+    ret_code: String,
+    qr_code: String,
+    qr_code_id: u64,
+    exp_time: String,
+    create_dtm: String,
+    code_type: u8,
+    code_acc_type: u8,
+    acc_list: Vec<>,
+    Time_in_millis:,
 }
 
 pub struct RequestData {
@@ -39,7 +57,9 @@ pub struct RequestData {
 const URL: &str = "https://pay.dgut.lerongsoft.com/dgutccl-web/v2/front/genQrCode";
 
 pub fn resolve(ecard_id: String, acc_tr_type: u8) {
+    // Create client
     let client = Client::new();
+    // Sending request
     let res = client
         .post(URL)
         .header("Content-Type", "application/json")
@@ -56,8 +76,9 @@ pub fn resolve(ecard_id: String, acc_tr_type: u8) {
     // TODO Missing handle and resolve resp data
     match res {
         Ok(res) => {
-            let handled: Value = serde_json::from_str(&*res.text().unwrap()).unwrap();
-            println!("{}", handled);
+            let handled: EncodedResp = serde_json::from_str(&*res.text().unwrap()).unwrap();
+            let decode_into_hex = decode(handled.info).unwrap();
+            println!("{} {:?}", handled.ret_code, decipher_default(&decode_into_hex));
         }
         Err(_) => println!("Something Gone wrong"),
     }
