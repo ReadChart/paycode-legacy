@@ -12,7 +12,7 @@ use crate::services::result_services::{
     decipher_default,
 };
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 struct EncodedReq {
     param: String,
 }
@@ -36,16 +36,29 @@ struct EncodedResp {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
+struct StatusList {
+    acc_tr_type: String,
+    acc_amt: u32,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct Resp {
     ret_code: String,
     qr_code: String,
     qr_code_id: u64,
     exp_time: String,
     create_dtm: String,
-    code_type: u8,
-    code_acc_type: u8,
-    acc_list: Vec<>,
-    Time_in_millis:,
+    code_type: String,
+    code_acc_type: String,
+    acc_list: Vec<StatusList>,
+    distributed_key: String,
+    prev_distributed_key: String,
+    account_status: String,
+    overdraft_amount: String,
+    identityid: String,
+    off_code_number: String,
+    health: String,
 }
 
 pub struct RequestData {
@@ -73,13 +86,16 @@ pub fn resolve(ecard_id: String, acc_tr_type: u8) {
             }).unwrap()))
         })
         .send();
-    // TODO Missing handle and resolve resp data
+
     match res {
+        // Lack of result handling
         Ok(res) => {
-            let handled: EncodedResp = serde_json::from_str(&*res.text().unwrap()).unwrap();
+            let handled: EncodedResp = serde_json::from_str(&res.text().unwrap()).unwrap();
             let decode_into_hex = decode(handled.info).unwrap();
-            println!("{} {:?}", handled.ret_code, decipher_default(&decode_into_hex));
+            println!("{}", handled.ret_code);
+            let json: Resp = serde_json::from_str(&decipher_default(&decode_into_hex).unwrap()).unwrap();
+            println!("{:?}", json.qr_code);
         }
-        Err(_) => println!("Something Gone wrong"),
+        Err(_) => println!("Resolving data from {} went wrong, check parameters", URL),
     }
 }
