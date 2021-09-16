@@ -1,7 +1,7 @@
 extern crate reqwest;
 extern crate serde;
 
-use actix_web::web::Json;
+use actix_web::{web::Json, Result, Error};
 use hex::{decode, encode};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
@@ -34,16 +34,16 @@ struct EncodedResp {
     info: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct StatusList {
     acc_tr_type: String,
     acc_amt: u32,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-struct Resp {
+pub struct Resp {
     ret_code: String,
     qr_code: String,
     qr_code_id: u64,
@@ -58,7 +58,6 @@ struct Resp {
     overdraft_amount: String,
     identityid: String,
     off_code_number: String,
-    health: String,
 }
 
 pub struct RequestData {
@@ -69,7 +68,7 @@ pub struct RequestData {
 
 const URL: &str = "https://pay.dgut.lerongsoft.com/dgutccl-web/v2/front/genQrCode";
 
-pub fn resolve(ecard_id: String, acc_tr_type: u8) {
+pub fn resolve(ecard_id: String, acc_tr_type: u8) -> Result<Resp> {
     // Create client
     let client = Client::new();
     // Sending request
@@ -87,15 +86,10 @@ pub fn resolve(ecard_id: String, acc_tr_type: u8) {
         })
         .send();
 
-    match res {
-        // Lack of result handling
-        Ok(res) => {
-            let handled: EncodedResp = serde_json::from_str(&res.text().unwrap()).unwrap();
-            let decode_into_hex = decode(handled.info).unwrap();
-            println!("{}", handled.ret_code);
-            let json: Resp = serde_json::from_str(&decipher_default(&decode_into_hex).unwrap()).unwrap();
-            println!("{:?}", json.qr_code);
-        }
-        Err(_) => println!("Resolving data from {} went wrong, check parameters", URL),
-    }
+
+    let handled: EncodedResp = serde_json::from_str(&res.unwrap().text().unwrap()).unwrap();
+    let decode_into_hex = decode(handled.info).unwrap();
+    println!("{}", handled.ret_code);
+    let json: Resp = serde_json::from_str(&decipher_default(&decode_into_hex).unwrap()).unwrap();
+    Ok(json)
 }
