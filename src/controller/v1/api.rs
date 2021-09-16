@@ -1,37 +1,25 @@
 extern crate actix_web;
-extern crate serde;
-extern crate serde_json;
-extern crate serde_derive;
 extern crate mime;
+extern crate serde;
+extern crate serde_derive;
+extern crate serde_json;
 
 use actix_web::{
     error,
+    Error,
     HttpResponse,
     post,
     Result,
     web,
-    Error,
+};
+use serde::{
+    Deserialize, Serialize,
 };
 
-use serde::{
-    Serialize, Deserialize,
-};
-use crate::services::qrcode_services::resolve;
+use crate::services::qrcode_services::{RequestData, resolve, ResolveError};
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg
-        .app_data(
-            // Json extractor configuration for this resource.
-            web::JsonConfig::default()
-                .limit(4096) // Limit request payload size
-                .content_type(|mime| {  // <- accept text/plain content type
-                    mime.type_() == mime::TEXT && mime.subtype() == mime::PLAIN
-                })
-                .error_handler(|err, req| {  // <- create custom error response
-                    error::InternalError::from_response(
-                        err, HttpResponse::Conflict().finish()).into()
-                })
-        )
         .service(get_qr_code_detail);
 }
 
@@ -62,5 +50,5 @@ impl Req {
 #[post("/getQrCodeDetail")]
 pub async fn get_qr_code_detail(req_body: web::Json<Req>) -> Result<String> {
     let res = resolve(String::from(req_body.get_card_id()), *req_body.get_acc_type()).unwrap();
-    Ok(format!("{:?}", res))
+    Ok(serde_json::to_string(&res).unwrap())
 }
