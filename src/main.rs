@@ -1,7 +1,7 @@
 extern crate actix_web;
 
-use actix_web::{App, web, HttpServer, middleware::Logger};
-use hex::FromHex;
+use actix_web::{App, HttpServer, middleware::Logger, web};
+
 use crate::controller::v1;
 
 mod controller;

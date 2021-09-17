@@ -1,7 +1,7 @@
 extern crate reqwest;
 extern crate serde;
 
-use actix_web::Result;
+use actix_web::{error, Result};
 use hex::{decode, encode};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
@@ -66,9 +66,9 @@ pub struct Resp {
 
 #[derive(Deserialize, Serialize)]
 pub struct RequestData {
-    status_code: u8,
-    qrcode: String,
-    msg: String,
+    pub status_code: u8,
+    pub qrcode: String,
+    pub msg: String,
 }
 
 const URL: &str = "https://pay.dgut.lerongsoft.com/dgutccl-web/v2/front/genQrCode";
