@@ -12,15 +12,24 @@ use serde::{
     Deserialize, Serialize,
 };
 
-use crate::services::qrcode_services::{resolve, ResolveError};
+use crate::services::qrcode_services::{RequestData, resolve};
 
-#[derive(Debug, Display, Error)]
-enum UserError {
-    #[display(fmt = "An internal error occurred. Please try again later.")]
-    InternalError,
+#[derive(Debug, Serialize, Display, Error)]
+pub enum ResolveError {
+    #[display(fmt = "Failed To Decode Result Into Readable Result")]
+    DecodeIntoUTF8Error,
+    #[display(fmt = "Failed To Decipher Result")]
+    DecipherError,
+    #[display(fmt = "Unable To Request From Upstream")]
+    UpstreamRespError,
+    #[display(fmt = "Failed To Read Upstream Response")]
+    UpstreamRespUnreadable,
+    #[display(fmt = "Failed To Decode Message Into Hex")]
+    DecodeIntoHexError,
+
 }
 
-impl error::ResponseError for UserError {
+impl error::ResponseError for ResolveError {
     fn error_response(&self) -> HttpResponse {
         HttpResponseBuilder::new(self.status_code())
             .set_header(header::CONTENT_TYPE, "text/html; charset=utf-8")
@@ -28,19 +37,18 @@ impl error::ResponseError for UserError {
     }
     fn status_code(&self) -> StatusCode {
         match *self {
-            UserError::InternalError => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::DecodeIntoUTF8Error => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::DecipherError => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::UpstreamRespError => StatusCode::BAD_REQUEST,
+            ResolveError::UpstreamRespUnreadable => StatusCode::BAD_REQUEST,
+            ResolveError::DecodeIntoHexError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
 
-#[get("/")]
-async fn index() -> Result<&'static str, UserError> {
-    serde_json::from_str("213123123123").map_err(|_e| UserError::InternalError)?;
-    Ok("success!")
-}
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(index);
+    cfg.service(get_qr_code_detail);
 }
 
 #[derive(Serialize)]
@@ -66,15 +74,8 @@ impl Req {
     }
 }
 
-// TODO gaining ecard Id and code type from here and call resolve() to handle communication with pay.dgut.lerongsoft.com and return resolved data
-// #[post("/getQrCodeDetail")]
-// pub async fn get_qr_code_detail(req_body: web::Json<Req>) -> Result<Resp, ResolveError> {
-//     let res = resolve(String::from(req_body.get_card_id()), *req_body.get_acc_type());
-//     match res {
-//         Ok(res) => Ok(Resp{
-//                status: res.status_code,
-//                qrcode: String::from(res.qrcode)
-//            }),
-//         Err(res) => Err(res.map_err),
-//     }
-// }
+#[post("/getQrCodeDetail")]
+pub async fn get_qr_code_detail(req_body: web::Json<Req>) -> Result<HttpResponse, ResolveError> {
+    let res = resolve(String::from(req_body.get_card_id()), *req_body.get_acc_type())?;
+    Ok(HttpResponse::Ok().json(res))
+}

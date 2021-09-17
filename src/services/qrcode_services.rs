@@ -1,20 +1,19 @@
+extern crate derive_more;
 extern crate reqwest;
 extern crate serde;
 
-use actix_web::{error, Result};
+use actix_web::{dev::HttpResponseBuilder, error, HttpResponse, Result};
+use actix_web::http::{header, StatusCode};
+use derive_more::{Display, Error};
 use hex::{decode, encode};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 
+use crate::controller::v1::api::ResolveError;
 use crate::services::result_services::{
     cipher_default,
     decipher_default,
 };
-
-#[derive(Debug, Serialize)]
-pub struct ResolveError {
-    msg: &'static str,
-}
 
 #[derive(Serialize, Debug)]
 struct EncodedReq {
@@ -89,41 +88,17 @@ pub fn resolve(ecard_id: String, acc_tr_type: u8) -> Result<RequestData, Resolve
                 request_flag: 0,
             }).unwrap()))
         })
-        .send();
-    match res {
-        Ok(res) => {
-            let res_handler = serde_json::from_str(&res.text().unwrap());
-            match res_handler {
-                Ok(res_handler) => {
-                    let handled_res: EncodedResp = res_handler;
-                    let decoded = decode(handled_res.info);
-                    match decoded {
-                        Ok(decoded) => {
-                            let deciphered = decipher_default(&decoded);
-                            match deciphered {
-                                Ok(deciphered) => {
-                                    let final_res = serde_json::from_str(&deciphered);
-                                    match final_res {
-                                        Ok(final_res) => {
-                                            let final_res_handled: Resp = final_res;
-                                            Ok(RequestData {
-                                                status_code: 0,
-                                                qrcode: final_res_handled.qr_code,
-                                                msg: "QrCode Request Success".to_string(),
-                                            })
-                                        },
-                                        Err(_) => Err(ResolveError { msg: "Decode Into UTF8 Error" }),
-                                    }
-                                },
-                                Err(_) => Err(ResolveError { msg: "DecipherError" }),
-                            }
-                        },
-                        Err(_) => Err(ResolveError { msg: "DecodeIntoHexError" }),
-                    }
-                },
-                Err(_) => Err(ResolveError { msg: "UpstreamRespUnreadable" }),
-            }
-        },
-        Err(_) => Err(ResolveError { msg: "UpstreamResponseError" }),
-    }
+        .send()
+        .map_err(|_e| ResolveError::UpstreamRespError)?;
+    let res_handler = serde_json::from_str(&res.text().unwrap()).map_err(|_e| ResolveError::UpstreamRespUnreadable)?;
+    let handled_res: EncodedResp = res_handler;
+    let decoded = decode(handled_res.info).map_err(|_e| ResolveError::DecodeIntoHexError)?;
+    let deciphered = decipher_default(&decoded).map_err(|_e| ResolveError::DecipherError)?;
+    let final_res = serde_json::from_str(&deciphered).map_err(|_e| ResolveError::DecodeIntoUTF8Error)?;
+    let final_res_handled: Resp = final_res;
+    Ok(RequestData {
+        status_code: 0,
+        qrcode: final_res_handled.qr_code,
+        msg: "QrCode Request Success".to_string(),
+    })
 }
