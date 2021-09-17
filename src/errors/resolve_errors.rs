@@ -15,10 +15,7 @@ use derive_more::{
     Display,
     Error,
 };
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use serde::Serialize;
 
 #[derive(Debug, Serialize, Display, Error)]
 pub enum ResolveError {

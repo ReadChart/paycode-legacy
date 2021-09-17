@@ -5,15 +5,18 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-use actix_web::{error, get, http::header, http::StatusCode, HttpResponse, post, Result, web};
-use actix_web::dev::HttpResponseBuilder;
-use derive_more::{Display, Error};
+use actix_web::{
+    HttpResponse,
+    post,
+    Result,
+    web,
+};
 use serde::{
     Deserialize, Serialize,
 };
 
 use crate::errors::resolve_errors::ResolveError;
-use crate::services::qrcode_services::{RequestData, resolve};
+use crate::services::qrcode_services::resolve;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(get_qr_code_detail);
@@ -28,7 +31,7 @@ struct Resp {
 
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-struct Req {
+pub struct Req {
     card_id: String,
     acc_type: u8,
 }

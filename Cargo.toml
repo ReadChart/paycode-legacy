@@ -1,5 +1,5 @@
 [package]
-name = "PayCode"
+name = "pay_code"
 version = "0.1.0"
 authors = ["Richard <zqdbyct@gmail.com>"]
 edition = "2018"

@@ -2,14 +2,7 @@ extern crate derive_more;
 extern crate reqwest;
 extern crate serde;
 
-use actix_web::{
-    dev::HttpResponseBuilder,
-    error,
-    http::{header, StatusCode},
-    HttpResponse,
-    Result,
-};
-use derive_more::{Display, Error};
+use actix_web::Result;
 use hex::{decode, encode};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
