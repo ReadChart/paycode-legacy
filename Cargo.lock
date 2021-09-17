@@ -6,18 +6,18 @@ version = 3
 name = "PayCode"
 version = "0.1.0"
 dependencies = [
-    "actix-web",
-    "aes",
-    "block-modes",
-    "derive_more",
-    "env_logger",
-    "hex",
-    "mime",
-    "openssl",
-    "reqwest",
-    "serde",
-    "serde_derive",
-    "serde_json",
+ "actix-web",
+ "aes",
+ "block-modes",
+ "derive_more",
+ "env_logger",
+ "hex",
+ "mime",
+ "openssl",
+ "reqwest",
+ "serde",
+ "serde_derive",
+ "serde_json",
 ]
 
 [[package]]

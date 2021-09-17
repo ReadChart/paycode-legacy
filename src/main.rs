@@ -6,6 +6,7 @@ use crate::controller::v1;
 
 mod controller;
 mod services;
+mod errors;
 
 // Main crate
 #[actix_web::main]
