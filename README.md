@@ -21,5 +21,4 @@ cd PayCode-DGUT
 cargo run
 ```
 
-
-
+note: Aes128Cbc key and iv have been removed from `result_service.rs`;
