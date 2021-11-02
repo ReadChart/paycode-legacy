@@ -2,8 +2,6 @@ extern crate actix_web;
 
 use actix_web::{App, HttpServer, middleware::Logger, web};
 
-use crate::controller::v1;
-
 mod controller;
 mod services;
 mod errors;
@@ -17,8 +15,10 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move||{
         App::new()
             .wrap(Logger::default())
+            .service(web::scope("")
+                .configure(controller::index::config))
             .service(web::scope("/api")
-                .configure(v1::api::config))
+                .configure(controller::v1::api::config))
     })
         .bind("127.0.0.1:8080")?
         .run()

@@ -1,6 +1,6 @@
 [package]
 name = "pay_code"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Richard <zqdbyct@gmail.com>"]
 edition = "2018"
 
@@ -8,6 +8,8 @@ edition = "2018"
 
 [dependencies]
 actix-web = { version = "3", features = ["openssl"] }
+r2d2 = "0.8.9"
+r2d2_mysql = "21.0.0"
 aes = "0.7.5"
 openssl = "0.10"
 serde = { version = "^1.0", feature = ["derive"] }
