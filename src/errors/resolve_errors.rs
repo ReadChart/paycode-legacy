@@ -2,6 +2,8 @@ extern crate actix_web;
 extern crate derive_more;
 extern crate serde;
 
+use std::fmt::{Display, Formatter};
+
 use actix_web::{
     dev::HttpResponseBuilder,
     error,
@@ -32,12 +34,13 @@ pub enum ResolveError {
 
 }
 
-impl error::ResponseError for ResolveError {
-    fn error_response(&self) -> HttpResponse {
-        HttpResponseBuilder::new(self.status_code())
-            .set_header(header::CONTENT_TYPE, "text/html; charset=utf-8")
-            .body(self.to_string())
+impl Display for ResolveError {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(formatter, "{}", self.0)
     }
+}
+
+impl error::ResponseError for ResolveError {
     fn status_code(&self) -> StatusCode {
         match *self {
             ResolveError::DecodeIntoUTF8Error => StatusCode::INTERNAL_SERVER_ERROR,
@@ -46,5 +49,10 @@ impl error::ResponseError for ResolveError {
             ResolveError::UpstreamRespUnreadable => StatusCode::BAD_REQUEST,
             ResolveError::DecodeIntoHexError => StatusCode::INTERNAL_SERVER_ERROR,
         }
+    }
+    fn error_response(&self) -> HttpResponse {
+        HttpResponseBuilder::new(self.status_code())
+            .set_header(header::CONTENT_TYPE, "text/html; charset=utf-8")
+            .body(self.to_string())
     }
 }
