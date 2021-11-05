@@ -34,10 +34,10 @@ pub enum ResolveError {
 
 }
 
-impl Display for ResolveError {
-    fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(formatter, "{}", self.0)
-    }
+#[derive(Serialize)]
+pub struct ErrBody {
+    status: u16,
+    msg: String,
 }
 
 impl error::ResponseError for ResolveError {
@@ -52,7 +52,7 @@ impl error::ResponseError for ResolveError {
     }
     fn error_response(&self) -> HttpResponse {
         HttpResponseBuilder::new(self.status_code())
-            .set_header(header::CONTENT_TYPE, "text/html; charset=utf-8")
-            .body(self.to_string())
+            .set_header(header::CONTENT_TYPE, "application/json; charset=utf-8")
+            .json(ErrBody { status: self.status_code().as_u16(), msg: self.to_string() })
     }
 }

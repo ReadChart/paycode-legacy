@@ -15,10 +15,10 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move||{
         App::new()
             .wrap(Logger::default())
-            .service(web::scope("")
-                .configure(controller::index::config))
             .service(web::scope("/api")
                 .configure(controller::v1::api::config))
+            .service(web::scope("/")
+                .configure(controller::index::config))
     })
         .bind("127.0.0.1:8080")?
         .run()
