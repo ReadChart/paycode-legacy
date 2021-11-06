@@ -10,9 +10,9 @@ mod structs;
 // Main crate
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "actix_web=debug"); // Setting Environmental Variables
+    std::env::set_var("RUST_LOG", "actix_web=debug, info"); // Setting Environmental Variables
     env_logger::init(); // Initial env_logger
-    HttpServer::new(move||{
+    HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
             .service(web::scope("/api")
@@ -20,7 +20,7 @@ async fn main() -> std::io::Result<()> {
             .service(web::scope("/")
                 .configure(controller::index::config))
     })
-        .bind("127.0.0.1:8080")?
+        .bind("127.0.0.1:7878")?
         .run()
         .await
 }

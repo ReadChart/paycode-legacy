@@ -2,8 +2,6 @@ extern crate actix_web;
 extern crate derive_more;
 extern crate serde;
 
-use std::fmt::{Display, Formatter};
-
 use actix_web::{
     dev::HttpResponseBuilder,
     error,
