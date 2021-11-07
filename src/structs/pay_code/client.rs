@@ -4,6 +4,7 @@ use serde::{
     Deserialize,
     Serialize,
 };
+use rbatis::crud::CRUDTable;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -26,4 +27,28 @@ pub struct PayCodeClientRespBody {
     pub status_code: u8,
     pub qrcode: String,
     pub msg: String,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PayCodeDto {
+    pub card_id: Option<String>,
+    pub account_type: Option<u8>,
+}
+impl_field_name_method!(PayCodeDto{card_id, account_type});
+impl Default for PayCodeDto {
+    fn default() -> Self {
+        PayCodeDto {
+            card_id: None,
+            account_type: None
+        }
+    }
+}
+
+impl CRUDTable for PayCodeDto {
+    fn table_name() -> String {
+        "t_query_log".to_string()
+    }
+
+    fn table_columns() -> String {
+        "card_id,account_type".to_string()
+    }
 }

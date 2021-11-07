@@ -11,8 +11,8 @@ use block_modes::{block_padding::ZeroPadding, BlockMode, Cbc};
 type Aes128CbcZeroPadding = Cbc<Aes128, ZeroPadding>;
 
 // Define Default KEY And IV;
-const KEY: &[u8] = b"***REMOVED***";
-const IV: &[u8] = b"***REMOVED***";
+const KEY: &[u8] = b"ABCE2E0920403123";
+const IV: &[u8] = b"ABC02F90F84AC123";
 
 // General decipher for normal AES/CBC/ZeroPadding
 pub fn decipher(key: &[u8], iv: &[u8], data: &[u8]) -> Result<String, FromUtf8Error> {

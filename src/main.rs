@@ -1,26 +1,36 @@
+#[macro_use]
+extern crate rbatis;
 extern crate actix_web;
 
+use std::sync::Arc;
 use actix_web::{App, HttpServer, middleware::Logger, web};
-
-use crate::controller::v1;
+use rbatis::rbatis::Rbatis;
 
 mod controller;
 mod services;
 mod errors;
 mod structs;
 
+
 // Main crate
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "actix_web=debug"); // Setting Environmental Variables
+    let rbatis = Rbatis::new();
+    rbatis.link(MYSQL_URL).await?;
+    let rbatis = Arc::new(rbatis);
+    std::env::set_var("RUST_LOG", "actix_web=debug, info"); // Setting Environmental Variables
     env_logger::init(); // Initial env_logger
-    HttpServer::new(move||{
+    HttpServer::new(move || {
         App::new()
+            .data(rbatis.to_owned())
             .wrap(Logger::default())
             .service(web::scope("/api")
-                .configure(v1::api::config))
+                .configure(controller::v1::api::config))
+            .service(web::scope("/")
+                .configure(controller::index::config))
     })
-        .bind("127.0.0.1:8080")?
+        // Important Note: 127.0.0.1 only allows requests from localhost, while 0.0.0.0 allows all.
+        .bind("0.0.0.0:7878")?
         .run()
         .await
 }
@@ -28,8 +38,8 @@ async fn main() -> std::io::Result<()> {
 
 #[cfg(test)]
 mod tests {
+
     #[test]
     fn common_test() {
-        assert_eq!(2 + 2, 4);
     }
 }
