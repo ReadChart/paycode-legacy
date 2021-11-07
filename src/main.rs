@@ -12,7 +12,6 @@ mod errors;
 mod structs;
 
 
-pub const MYSQL_URL: &'static str = "mysql:///pay_code";
 // Main crate
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

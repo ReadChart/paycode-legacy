@@ -61,18 +61,18 @@ impl Req {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CipheredResp {
-    ret_code: String,
-    info: String,
+    ret_code: Option<String>,
+    info: Option<String>,
 }
 
 impl CipheredResp {
-    pub fn ret_code(&self) -> &String {
+    pub fn ret_code(&self) -> &Option<String> {
         &self.ret_code
     }
-    pub fn info(&self) -> &String {
+    pub fn info(&self) -> &Option<String> {
         &self.info
     }
-    pub fn new(ret_code: String, info: String) -> CipheredResp {
+    pub fn new(ret_code: Option<String>, info: Option<String>) -> CipheredResp {
         CipheredResp {
             ret_code,
             info,

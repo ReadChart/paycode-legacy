@@ -29,7 +29,8 @@ pub enum ResolveError {
     UpstreamRespUnreadable,
     #[display(fmt = "Failed To Decode Message Into Hex")]
     DecodeIntoHexError,
-
+    #[display(fmt = "Incorrect Param")]
+    IncorrectParam
 }
 
 #[derive(Serialize)]
@@ -41,11 +42,12 @@ pub struct ErrBody {
 impl error::ResponseError for ResolveError {
     fn status_code(&self) -> StatusCode {
         match *self {
-            ResolveError::DecodeIntoUTF8Error => StatusCode::INTERNAL_SERVER_ERROR,
-            ResolveError::DecipherError => StatusCode::INTERNAL_SERVER_ERROR,
-            ResolveError::UpstreamRespError => StatusCode::BAD_REQUEST,
+            ResolveError::DecodeIntoUTF8Error    => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::DecipherError          => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::UpstreamRespError      => StatusCode::BAD_REQUEST,
             ResolveError::UpstreamRespUnreadable => StatusCode::BAD_REQUEST,
-            ResolveError::DecodeIntoHexError => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::DecodeIntoHexError     => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::IncorrectParam         => StatusCode::BAD_REQUEST,
         }
     }
     fn error_response(&self) -> HttpResponse {
