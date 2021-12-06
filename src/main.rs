@@ -12,6 +12,7 @@ mod errors;
 mod structs;
 
 
+pub const MYSQL_URL: &'static str = "mysql://username:password@ip_addr:port/schema";
 // Main crate
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
