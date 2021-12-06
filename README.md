@@ -22,3 +22,7 @@ cargo run
 ```
 
 note: Aes128Cbc key and iv have been removed from `result_service.rs`;
+
+
+
+Update: due to api update, this method of gaining QrCode will be deprecated shortly; this repo is archived.
