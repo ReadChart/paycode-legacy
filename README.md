@@ -2,7 +2,7 @@
 
 This project is for learning purposes, using [actix-web](https://github.com/actix/actix-web)
 and [reqwest](https://github.com/seanmonstar/reqwest) to implement a server program to request QR code of DGUT, port
-binding as `127.0.0.1:8080`. There are some feature upgrades in the feature, please be patient.
+binding as `127.0.0.1:8080`. ~~There are some feature upgrades in the feature, please be patient.~~ Due to the authentication update recently, and I have to work a lil bit hard, this project will not receive any update any longer(for now). And don’t panic if you find yourself some **Bonus** within codes I have pushed.
 
 ## How to run
 
