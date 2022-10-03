@@ -1,3 +1,3 @@
 #![allow(dead_code)]
-pub mod v1;
 pub mod index;
+pub mod v1;

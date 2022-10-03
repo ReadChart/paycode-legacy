@@ -5,16 +5,10 @@ extern crate serde;
 use actix_web::{
     dev::HttpResponseBuilder,
     error,
-    http::{
-        header,
-        StatusCode,
-    },
+    http::{header, StatusCode},
     HttpResponse,
 };
-use derive_more::{
-    Display,
-    Error,
-};
+use derive_more::{Display, Error};
 use serde::Serialize;
 
 #[derive(Debug, Serialize, Display, Error)]
@@ -30,7 +24,7 @@ pub enum ResolveError {
     #[display(fmt = "Failed To Decode Message Into Hex")]
     DecodeIntoHexError,
     #[display(fmt = "Incorrect Param")]
-    IncorrectParam
+    IncorrectParam,
 }
 
 #[derive(Serialize)]
@@ -42,17 +36,20 @@ pub struct ErrBody {
 impl error::ResponseError for ResolveError {
     fn status_code(&self) -> StatusCode {
         match *self {
-            ResolveError::DecodeIntoUTF8Error    => StatusCode::INTERNAL_SERVER_ERROR,
-            ResolveError::DecipherError          => StatusCode::INTERNAL_SERVER_ERROR,
-            ResolveError::UpstreamRespError      => StatusCode::BAD_REQUEST,
+            ResolveError::DecodeIntoUTF8Error => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::DecipherError => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::UpstreamRespError => StatusCode::BAD_REQUEST,
             ResolveError::UpstreamRespUnreadable => StatusCode::BAD_REQUEST,
-            ResolveError::DecodeIntoHexError     => StatusCode::INTERNAL_SERVER_ERROR,
-            ResolveError::IncorrectParam         => StatusCode::BAD_REQUEST,
+            ResolveError::DecodeIntoHexError => StatusCode::INTERNAL_SERVER_ERROR,
+            ResolveError::IncorrectParam => StatusCode::BAD_REQUEST,
         }
     }
     fn error_response(&self) -> HttpResponse {
         HttpResponseBuilder::new(self.status_code())
             .set_header(header::CONTENT_TYPE, "application/json; charset=utf-8")
-            .json(ErrBody { status: self.status_code().as_u16(), msg: self.to_string() })
+            .json(ErrBody {
+                status: self.status_code().as_u16(),
+                msg: self.to_string(),
+            })
     }
 }

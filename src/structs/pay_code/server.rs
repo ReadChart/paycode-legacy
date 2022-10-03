@@ -1,9 +1,6 @@
 extern crate serde;
 
-use serde::{
-    Deserialize,
-    Serialize,
-};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Debug)]
 pub struct CipheredReq {
@@ -16,7 +13,7 @@ impl CipheredReq {
     }
     pub fn new(param: &String) -> CipheredReq {
         CipheredReq {
-            param: String::from(param)
+            param: String::from(param),
         }
     }
 }
@@ -47,7 +44,13 @@ impl Req {
     pub fn request_flag(&self) -> &u8 {
         &self.request_flag
     }
-    pub fn new(ecard_id: String, code_type: u8, tr_type: String, acc_tr_type: u8, request_flag: u8) -> Req {
+    pub fn new(
+        ecard_id: String,
+        code_type: u8,
+        tr_type: String,
+        acc_tr_type: u8,
+        request_flag: u8,
+    ) -> Req {
         Req {
             ecard_id,
             code_type,
@@ -73,10 +76,7 @@ impl CipheredResp {
         &self.info
     }
     pub fn new(ret_code: Option<String>, info: Option<String>) -> CipheredResp {
-        CipheredResp {
-            ret_code,
-            info,
-        }
+        CipheredResp { ret_code, info }
     }
 }
 

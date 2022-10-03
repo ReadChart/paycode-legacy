@@ -1,5 +1,5 @@
-use actix_web::{HttpResponse, web, get};
 use actix_web::client::HttpError;
+use actix_web::{get, web, HttpResponse};
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(hello);

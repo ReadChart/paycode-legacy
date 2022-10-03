@@ -1,10 +1,7 @@
 extern crate serde;
 
-use serde::{
-    Deserialize,
-    Serialize,
-};
 use rbatis::crud::CRUDTable;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -33,12 +30,15 @@ pub struct PayCodeDto {
     pub card_id: Option<String>,
     pub account_type: Option<u8>,
 }
-impl_field_name_method!(PayCodeDto{card_id, account_type});
+impl_field_name_method!(PayCodeDto {
+    card_id,
+    account_type
+});
 impl Default for PayCodeDto {
     fn default() -> Self {
         PayCodeDto {
             card_id: None,
-            account_type: None
+            account_type: None,
         }
     }
 }
