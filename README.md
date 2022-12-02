@@ -1,4 +1,4 @@
-# PayCode-DGUT
+# paycode-legacy
 
 This project is for learning purposes, using [actix-web](https://github.com/actix/actix-web)
 and [reqwest](https://github.com/seanmonstar/reqwest) to implement a server program to request QR code of DGUT, port
@@ -11,13 +11,13 @@ First, obviously you should have the rust environment for compelling this projec
 Then clone the project to you disk:
 
 ```bash
-$ git clone https://github.com/BKDOnions/PayCode-DGUT.git
+$ git clone https://github.com/BKDOnions/paycode-legacy.git
 ```
 
 Then Run, (don't about for the dependencies, cargo will fix them for you)
 
 ```bash
-cd PayCode-DGUT
+cd paycode-legacy
 cargo run
 ```
 
